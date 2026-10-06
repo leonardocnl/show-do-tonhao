@@ -1,0 +1,21 @@
+{% extends "layouts/base.html" %}
+{% block titulo %}Excluir pergunta · Show do Tonhão{% endblock %}
+
+{% block conteudo %}
+<div class="flex min-h-[calc(100vh-10rem)] items-center justify-center p-4">
+  <div class="card w-full max-w-xl text-center">
+    <form method="post">
+      {% csrf_token %}
+      <h1 class="mb-4 text-3xl">Excluir pergunta?</h1>
+      <p class="mb-4 text-lg">Esta ação não pode ser desfeita:</p>
+      <blockquote class="mb-8 rounded-2xl bg-soft p-5 text-xl font-bold text-ink">
+        {{ object.enunciado }}
+      </blockquote>
+      <div class="flex flex-col-reverse gap-4 sm:flex-row sm:justify-center">
+        <a class="btn btn-lg w-full sm:w-auto" href="{% url 'quiz:perguntas' %}">Cancelar</a>
+        <button type="submit" class="btn btn-danger btn-lg w-full sm:w-auto">Excluir</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

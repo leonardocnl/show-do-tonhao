@@ -1,0 +1,9 @@
+{% extends "layouts/base.html" %}
+{% block titulo %}Sem permissão · Show do Tonhão{% endblock %}
+{% block conteudo %}
+<div class="card mx-auto mt-8 max-w-2xl text-center">
+  <h1 class="mb-3 text-4xl leading-tight sm:text-5xl">Essa área não é pra você</h1>
+  <p class="mb-6">Seu perfil não tem permissão para acessar esta página. Se acha que é um engano, fale com um administrador.</p>
+  <a class="btn btn-primary" href="{% url 'quiz:inicio' %}">Voltar ao início</a>
+</div>
+{% endblock %}

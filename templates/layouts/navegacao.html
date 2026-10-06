@@ -1,0 +1,51 @@
+{% with rota=request.resolver_match.url_name %}
+<header class="border-b-4 border-line bg-paper">
+  <nav class="mx-auto flex w-full max-w-[1400px] flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 sm:px-6" aria-label="Principal">
+    <a class="sticker text-2xl" href="{% url 'quiz:inicio' %}">tonhão</a>
+
+    <button type="button" id="btn-menu" class="btn-tema ml-auto lg:hidden" aria-controls="menu" aria-expanded="false">
+      {% include "components/icone.html" with nome="menu" %}<span class="sr-only">Abrir menu</span>
+    </button>
+
+    <div id="menu" class="hidden w-full flex-col gap-4 lg:flex lg:w-auto lg:flex-1 lg:flex-row lg:items-center">
+      <ul class="flex flex-col gap-1 lg:flex-row lg:flex-1">
+        <li><a class="nav-link block" href="{% url 'quiz:inicio' %}"{% if rota == 'inicio' or rota == 'jogo' %} aria-current="page"{% endif %}>Jogar</a></li>
+        <li><a class="nav-link block" href="{% url 'quiz:ranking' %}"{% if rota == 'ranking' %} aria-current="page"{% endif %}>Ranking</a></li>
+        {% if user.is_authenticated %}
+          <li><a class="nav-link block" href="{% url 'quiz:historico' %}"{% if rota == 'historico' %} aria-current="page"{% endif %}>Histórico</a></li>
+        {% endif %}
+        {% if perms.quiz.view_pergunta %}
+          <li><a class="nav-link block" href="{% url 'quiz:perguntas' %}"{% if 'pergunta' in rota %} aria-current="page"{% endif %}>Perguntas</a></li>
+        {% endif %}
+        {% if user.is_staff %}
+          <li><a class="nav-link block" href="{% url 'admin:index' %}">Painel</a></li>
+        {% endif %}
+      </ul>
+
+      <div class="flex flex-wrap items-center gap-3">
+        {% include "components/aparencia.html" %}
+
+        {% if user.is_authenticated %}
+          <details class="relative" id="menu-usuario">
+            <summary class="btn btn-sm list-none [&::-webkit-details-marker]:hidden">
+              {% include "components/icone.html" with nome="user" classe="size-4" %}
+              {{ user.nome_exibicao }}
+              {% include "components/icone.html" with nome="chevron-down" classe="size-4" %}
+            </summary>
+            <div class="absolute right-0 z-20 mt-2 min-w-48 rounded-2xl border-4 border-line bg-paper p-2 shadow-hard">
+              <a class="menu-item" href="{% url 'quiz:historico' %}">Meu histórico</a>
+              <form method="post" action="{% url 'contas:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="menu-item">Sair</button>
+              </form>
+            </div>
+          </details>
+        {% else %}
+          <a class="btn btn-sm" href="{% url 'contas:login' %}">Entrar</a>
+          <a class="btn btn-sm btn-primary" href="{% url 'contas:cadastro' %}">Cadastrar</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+</header>
+{% endwith %}

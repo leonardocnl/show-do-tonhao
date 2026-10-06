@@ -1,0 +1,7 @@
+{% if messages %}
+  <div class="mb-5 flex flex-col gap-2" role="status">
+    {% for mensagem in messages %}
+      <div class="alerta alerta-{{ mensagem.tags }}">{{ mensagem }}</div>
+    {% endfor %}
+  </div>
+{% endif %}

@@ -1,0 +1,49 @@
+{% extends "layouts/base.html" %}
+{% load quiz_extras %}
+{% block titulo %}Show do Tonhão{% endblock %}
+
+{% block conteudo %}
+<section class="grid items-center gap-8 lg:min-h-[calc(100vh-14rem)] lg:grid-cols-[1.1fr_1fr] flex-col-reverse lg:flex-row">
+  <div class="order-1 lg:order-none">
+    <h1 class="mb-6 text-[clamp(2.2rem,8vw,5rem)] leading-tight sm:leading-none">Você tem o que<br class="hidden sm:block"> é preciso?</h1>
+
+    <form method="post" action="{% url 'quiz:iniciar' %}">
+      {% csrf_token %}
+      <p class="rotulo" id="rotulo-tema">Escolha um tema</p>
+      <div class="relative mb-6 flex flex-wrap gap-3" role="radiogroup" aria-labelledby="rotulo-tema">
+        <div class="contents">
+          <input class="peer sr-only" type="radio" name="tema" id="tema-geral" value="geral" checked>
+          <label class="chip" for="tema-geral">Geral</label>
+        </div>
+        {% for categoria in categorias %}
+          <div class="contents">
+            <input class="peer sr-only" type="radio" name="tema" id="tema-{{ categoria.slug }}" value="{{ categoria.slug }}">
+            <label class="chip" for="tema-{{ categoria.slug }}">{{ categoria.nome }}</label>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="mb-6 flex flex-col sm:flex-row sm:flex-wrap gap-4">
+        {% if not user.is_authenticated %}
+          <a class="btn btn-primary btn-lg w-full sm:w-auto" href="{% url 'contas:login' %}?next={% url 'quiz:inicio' %}">Entrar para jogar</a>
+        {% elif partida_em_andamento %}
+          <a class="btn btn-primary btn-lg w-full sm:w-auto" href="{% url 'quiz:jogo' %}">Continuar partida</a>
+        {% else %}
+          <button type="submit" class="btn btn-primary btn-lg w-full sm:w-auto">Jogar</button>
+        {% endif %}
+        <a class="btn btn-lg w-full sm:w-auto" href="{% url 'quiz:ranking' %}">Ranking</a>
+      </div>
+    </form>
+
+    <p>16 perguntas, de {{ 1000|reais }} a {{ 1000000|reais }}.</p>
+  </div>
+
+  <div class="flex h-48 sm:h-72 items-end justify-end lg:h-[min(58vh,520px)] order-2 lg:order-none w-full" aria-hidden="true">
+    <div class="relative flex h-full w-full max-w-[640px] items-end">
+      {% for i in blocos %}<div class="bloco flex-1" style="height: calc(4% + {{ i }} * 5%)"></div>{% endfor %}
+      <span class="valor-etiqueta right-0 bottom-[90%] -rotate-4 text-base sm:text-lg">{{ 1000000|reais }}</span>
+      <span class="valor-etiqueta bottom-[14%] left-0 -rotate-3 text-xs sm:text-sm">{{ 1000|reais }}</span>
+    </div>
+  </div>
+</section>
+{% endblock %}

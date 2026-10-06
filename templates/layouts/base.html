@@ -1,0 +1,51 @@
+{% load static %}<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Show do Tonhão{% endblock %}</title>
+  <script>
+    /* Aplica modo, tema e fonte salvos (ou o modo do sistema) antes de pintar a página. */
+    (function () {
+      var raiz = document.documentElement;
+      try {
+        var modo = localStorage.getItem('tonhao-tema');
+        if (!modo) { modo = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+        raiz.classList.toggle('dark', modo === 'dark');
+        var paleta = localStorage.getItem('tonhao-paleta');
+        if (paleta && paleta !== 'cozy') { raiz.setAttribute('data-palette', paleta); }
+        var fonte = localStorage.getItem('tonhao-fonte');
+        if (fonte && /^[A-Za-z0-9 ]+$/.test(fonte)) {
+          raiz.style.setProperty('--fonte', '"' + fonte + '", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif');
+        }
+      } catch (erro) { /* mantém o padrão */ }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600..900&family=Fredoka:wght@500..700&family=Baloo+2:wght@500..800&family=Lexend:wght@500..900&family=Figtree:wght@500..900&family=Plus+Jakarta+Sans:wght@500..800&family=Atkinson+Hyperlegible:wght@400;700&family=DM+Sans:wght@500..900&display=swap" rel="stylesheet">
+  <link href="{% static 'css/tailwind.css' %}" rel="stylesheet">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="tema-cozy">
+  {% block navegacao %}{% include "layouts/navegacao.html" %}{% endblock %}
+
+  <main class="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 sm:px-6">
+    {% include "components/mensagens.html" %}
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  {% block rodape %}
+  <footer class="mt-6 border-t-3 border-line bg-paper py-4 font-bold text-muted">
+    <div class="mx-auto flex w-full max-w-[1400px] flex-wrap justify-between gap-2 px-4 text-sm sm:px-6">
+      <span>Show do Tonhão · Programação Web (GAC116)</span>
+      <span>16 níveis · de R$ 1.000 a R$ 1.000.000</span>
+    </div>
+  </footer>
+  {% endblock %}
+
+  <script src="{% static 'js/aparencia.js' %}"></script>
+  <script src="{% static 'js/navegacao.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
