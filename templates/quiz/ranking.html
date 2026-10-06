@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+{% load quiz_extras %}
+{% block titulo %}Ranking · Show do Tonhão{% endblock %}
+
+{% block conteudo %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+  <h1 class="text-5xl">Ranking</h1>
+  <a class="btn" href="{% url 'quiz:inicio' %}">Voltar</a>
+</div>
+
+<div class="mb-6 flex flex-wrap gap-3" aria-label="Filtrar por tema">
+  <a class="chip{% if not tema %} chip-ativo{% endif %}" href="{% url 'quiz:ranking' %}">Todos</a>
+  <a class="chip{% if tema == 'geral' %} chip-ativo{% endif %}" href="?tema=geral">Geral</a>
+  {% for categoria in categorias %}
+    <a class="chip{% if tema == categoria.slug %} chip-ativo{% endif %}" href="?tema={{ categoria.slug }}">{{ categoria.nome }}</a>
+  {% endfor %}
+</div>
+
+{% if partidas %}
+<section class="card p-2 md:p-4">
+  <div class="overflow-x-auto">
+    <div class="tabela-wrapper"><table class="tabela">
+      <thead>
+        <tr>
+          <th class="text-center">Posição</th>
+          <th>Jogador</th>
+          <th>Tema</th>
+          <th class="text-right">Prêmio</th>
+          <th class="text-right">Tempo</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for partida in partidas %}
+          <tr>
+            <td class="text-center w-20">
+              <span class="rank-pos mx-auto{% if forloop.counter == 1 %} !bg-sun !text-navy{% elif forloop.counter == 2 %} !bg-orange !text-navy{% elif forloop.counter == 3 %} !bg-ok !text-white{% endif %}">{{ forloop.counter }}</span>
+            </td>
+            <td class="text-lg font-extrabold">{{ partida.jogador.nome_exibicao }}</td>
+            <td class="whitespace-nowrap">{{ partida.tema }}</td>
+            <td class="text-right text-lg font-black whitespace-nowrap">{{ partida.premio_final|reais }}</td>
+            <td class="text-right text-muted tabular-nums whitespace-nowrap">{{ partida.tempo_total|tempo }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+</section>
+{% else %}
+<section class="card p-6 text-center">
+  <p class="mb-4 text-lg">Ninguém terminou uma partida neste tema ainda. Que tal ser o primeiro?</p>
+  <a class="btn btn-primary" href="{% url 'quiz:inicio' %}">Jogar agora</a>
+</section>
+{% endif %}
+{% endblock %}

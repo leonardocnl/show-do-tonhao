@@ -1,0 +1,19 @@
+{# Renderiza um campo de formulário. Uso: {% include "components/campo.html" with campo=form.username %} #}
+{% load quiz_extras %}
+<div class="mb-5">
+  {% if campo.field.widget.input_type == "checkbox" %}
+    <div class="flex items-center gap-2.5">
+      {{ campo|com_estado }}
+      <label class="font-extrabold" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+    </div>
+  {% else %}
+    <label class="rotulo" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+    {{ campo|com_estado }}
+  {% endif %}
+  {% if campo.help_text %}<div class="ajuda-campo" id="{{ campo.id_for_label }}_help">{{ campo.help_text|safe }}</div>{% endif %}
+  {% for erro in campo.errors %}
+    <div class="erro-campo" id="{{ campo.id_for_label }}_error">
+      {% include "components/icone.html" with nome="alert-circle" classe="inline size-4 mr-1" %}{{ erro }}
+    </div>
+  {% endfor %}
+</div>

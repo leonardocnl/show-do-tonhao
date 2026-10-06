@@ -1,0 +1,27 @@
+/* Ajustes de marca sobre o tema Jazzmin do painel administrativo. */
+.sidebar-brand,
+.sidebar-brand .brand-link {
+  background: #f2b705 !important;
+}
+.sidebar-brand {
+  border-bottom: 3px solid #150e09 !important;
+}
+.sidebar-brand .brand-text,
+.sidebar-brand .brand-link {
+  color: #150e09 !important;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.app-sidebar,
+.main-sidebar {
+  background: #150e09 !important;
+}
+.app-sidebar .nav-link.active,
+.main-sidebar .nav-link.active {
+  background: #f2b705 !important;
+  color: #150e09 !important;
+}
+.btn-primary,
+.btn-success {
+  font-weight: 700;
+}

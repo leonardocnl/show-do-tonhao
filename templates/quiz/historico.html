@@ -1,0 +1,50 @@
+{% extends "layouts/base.html" %}
+{% load quiz_extras %}
+{% block titulo %}Meu histórico · Show do Tonhão{% endblock %}
+
+{% block conteudo %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+  <h1 class="text-5xl">Meu histórico</h1>
+  <a class="btn" href="{% url 'quiz:inicio' %}">Jogar</a>
+</div>
+
+{% if pagina %}
+<section class="card p-2 md:p-4">
+  <div class="overflow-x-auto">
+    <div class="tabela-wrapper"><table class="tabela">
+      <thead>
+        <tr><th>Data</th><th>Tema</th><th>Situação</th><th>Nível</th><th class="text-right">Tempo</th><th class="text-right">Prêmio</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for partida in pagina %}
+          <tr>
+            <td class="whitespace-nowrap">{{ partida.iniciada_em|date:"d/m/Y H:i" }}</td>
+            <td class="whitespace-nowrap">{{ partida.tema }}</td>
+            <td class="whitespace-nowrap"><span class="badge badge-{{ partida.status }}">{{ partida.get_status_display }}</span></td>
+            <td class="whitespace-nowrap">{{ partida.nivel_atual }}</td>
+            <td class="text-right tabular-nums whitespace-nowrap">{{ partida.duracao|tempo }}</td>
+            <td class="text-right font-bold whitespace-nowrap">{{ partida.premio_final|reais }}</td>
+            <td class="text-right whitespace-nowrap">
+              <div class="flex items-center justify-end gap-2">
+                {% if partida.status == 'andamento' %}
+                  <a class="btn btn-sm btn-primary" href="{% url 'quiz:jogo' %}">Continuar</a>
+                {% elif partida.status != 'abandonada' %}
+                  <a class="btn btn-sm" href="{% url 'quiz:resultado' partida.pk %}">Ver</a>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+</section>
+{% else %}
+<section class="card p-6 text-center">
+  <p class="mb-4 text-lg">Você ainda não jogou nenhuma partida.</p>
+  <a class="btn btn-primary" href="{% url 'quiz:inicio' %}">Jogar agora</a>
+</section>
+{% endif %}
+
+{% include "components/paginacao.html" with pagina=pagina qs="" %}
+{% endblock %}

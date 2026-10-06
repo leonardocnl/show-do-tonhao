@@ -1,0 +1,44 @@
+{# Menu "Aparência": modo claro/escuro, tema de cores e fonte. A lógica fica em static/js/aparencia.js. #}
+<div class="ap" data-aparencia>
+  <button type="button" class="ap-botao" aria-expanded="false" aria-controls="ap-painel">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.7-.8 1.7-1.7 0-.5-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4-4-7.5-9-7.5Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="14.5" cy="7" r="1"/></svg>
+    Aparência
+  </button>
+
+  <div class="ap-painel" id="ap-painel" role="group" aria-label="Aparência" hidden>
+    <div>
+      <p class="ap-titulo">Modo</p>
+      <div class="ap-grupo ap-grupo-2">
+        <button type="button" class="ap-opcao" data-modo="light" aria-pressed="false">{% include "components/icone.html" with nome="sun" classe="size-4" %}Claro</button>
+        <button type="button" class="ap-opcao" data-modo="dark" aria-pressed="false">{% include "components/icone.html" with nome="moon" classe="size-4" %}Escuro</button>
+      </div>
+    </div>
+
+    <div>
+      <p class="ap-titulo">Cores</p>
+      <div class="ap-grupo ap-grupo-2">
+        <button type="button" class="ap-opcao" data-tema="cozy" aria-pressed="false"><span class="ap-amostra" style="--a:#fbeed4;--b:#f2b705;--c:#ff5c00"></span>Cozy</button>
+        <button type="button" class="ap-opcao" data-tema="ceu" aria-pressed="false"><span class="ap-amostra" style="--a:#bde4ff;--b:#ffd23f;--c:#ff5b4b"></span>Céu</button>
+        <button type="button" class="ap-opcao" data-tema="lagoa" aria-pressed="false"><span class="ap-amostra" style="--a:#79c9be;--b:#ffd75e;--c:#ff7a3d"></span>Lagoa</button>
+        <button type="button" class="ap-opcao" data-tema="crepusculo" aria-pressed="false"><span class="ap-amostra" style="--a:#e6dcff;--b:#ffd166;--c:#ff6b9a"></span>Crepúsculo</button>
+        <button type="button" class="ap-opcao" data-tema="grafite" aria-pressed="false"><span class="ap-amostra" style="--a:#cfd8dc;--b:#ffca28;--c:#ff7043"></span>Grafite</button>
+        <button type="button" class="ap-opcao" data-tema="framboesa" aria-pressed="false"><span class="ap-amostra" style="--a:#f7c8d8;--b:#ffc94d;--c:#ff7aa8"></span>Framboesa</button>
+      </div>
+    </div>
+
+    <div>
+      <label class="ap-titulo block" for="ap-fonte">Fonte</label>
+      <select class="ap-select" id="ap-fonte">
+        <option value="Nunito">Nunito (padrão)</option>
+        <option value="Fredoka">Fredoka</option>
+        <option value="Baloo 2">Baloo 2</option>
+        <option value="Lexend">Lexend</option>
+        <option value="Figtree">Figtree</option>
+        <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
+        <option value="Atkinson Hyperlegible">Atkinson Hyperlegible</option>
+        <option value="DM Sans">DM Sans</option>
+      </select>
+    </div>
+    <p class="ap-nota">Suas escolhas ficam salvas neste navegador.</p>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+{# Uso: {% include "components/paginacao.html" with pagina=page_obj qs="tema=x" %} (qs opcional) #}
+{% if pagina.paginator.num_pages > 1 %}
+  <nav class="mt-6 flex flex-wrap items-center justify-center gap-2" aria-label="Páginas">
+    {% if pagina.has_previous %}<a class="btn btn-sm" href="?{% if qs %}{{ qs }}&{% endif %}page={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+    <span class="btn btn-sm !bg-ink !text-paper" aria-current="page">{{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+    {% if pagina.has_next %}<a class="btn btn-sm" href="?{% if qs %}{{ qs }}&{% endif %}page={{ pagina.next_page_number }}">Próxima</a>{% endif %}
+  </nav>
+{% endif %}
