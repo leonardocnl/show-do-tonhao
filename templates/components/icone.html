@@ -1,0 +1,17 @@
+{# Ícones SVG em linha. Uso: {% include "components/icone.html" with nome="check" classe="size-5" %} #}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+     stroke-linecap="round" stroke-linejoin="round" class="{{ classe|default:'size-5' }}" aria-hidden="true">
+  {% if nome == "moon" %}<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+  {% elif nome == "sun" %}<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+  {% elif nome == "user" %}<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>
+  {% elif nome == "plus" %}<path d="M12 5v14M5 12h14"/>
+  {% elif nome == "check" %}<path d="M5 12l5 5L19 7"/>
+  {% elif nome == "check-circle" %}<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>
+  {% elif nome == "trophy" %}<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4ZM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/>
+  {% elif nome == "cloud-rain" %}<path d="M20 16.5A4.5 4.5 0 0 0 17.5 8h-1A6 6 0 1 0 5 14.3M8 19v2M12 19v2M16 19v2"/>
+  {% elif nome == "menu" %}<path d="M4 6h16M4 12h16M4 18h16"/>
+  {% elif nome == "chevron-down" %}<path d="M6 9l6 6 6-6"/>
+  {% elif nome == "arrow-right" %}<path d="M5 12h14M13 6l6 6-6 6"/>
+  {% elif nome == "hand" %}<path d="M18 11V6a2 2 0 0 0-4 0"/><path d="M14 10V4a2 2 0 0 0-4 0"/><path d="M10 10.5V6a2 2 0 0 0-4 0"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
+  {% endif %}
+</svg>

@@ -1,0 +1,17 @@
+{% extends "layouts/base.html" %}
+{% block titulo %}Criar conta · Show do Tonhão{% endblock %}
+{% block conteudo %}
+<div class="card mx-auto my-6 max-w-md">
+  <h1 class="mb-6 text-3xl">Criar conta</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="alerta alerta-danger mb-4">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% for campo in form %}{% include "components/campo.html" with campo=campo %}{% endfor %}
+    
+    <button type="submit" class="btn btn-primary btn-lg mt-2 w-full">Cadastrar</button>
+  </form>
+  <p class="mt-6">Já tem conta? <a class="underline decoration-orange decoration-4 underline-offset-4" href="{% url 'contas:login' %}">Entrar</a></p>
+</div>
+{% endblock %}

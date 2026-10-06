@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+{% block titulo %}{% if object %}Editar pergunta{% else %}Nova pergunta{% endif %} · Show do Tonhão{% endblock %}
+
+{% block conteudo %}
+<div class="mx-auto max-w-3xl">
+  <h1 class="mb-6 text-4xl">{% if object %}Editar pergunta{% else %}Nova pergunta{% endif %}</h1>
+
+  <form method="post" class="card" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alerta alerta-danger mb-4">{{ form.non_field_errors }}</div>{% endif %}
+
+    {% for campo in form %}{% include "components/campo.html" with campo=campo %}{% endfor %}
+
+    <h2 class="mt-6 mb-1 text-xl">Alternativas</h2>
+    <p class="mb-4 text-muted">Informe 4 alternativas e marque a que está correta.</p>
+
+    {{ formset.management_form }}
+    {% if formset.non_form_errors %}<div class="alerta alerta-danger mb-4">{{ formset.non_form_errors }}</div>{% endif %}
+
+    {% for linha in formset %}
+      <div class="mb-4 rounded-3xl border-4 border-transparent p-2 transition has-[:checked]:border-ok/30 has-[:checked]:bg-ok/10">
+        <div class="grid grid-cols-[2.6rem_minmax(0,1fr)] items-center gap-3 sm:flex sm:flex-row">
+          <span class="alt-letra flex-none" aria-hidden="true">{% cycle "A" "B" "C" "D" %}</span>
+          <div class="flex-1">
+            <label class="sr-only" for="{{ linha.texto.id_for_label }}">Texto da alternativa {{ forloop.counter }}</label>
+            {% load quiz_extras %}
+            {{ linha.texto|com_estado }}
+          </div>
+          <div class="col-start-2 flex items-center gap-2 sm:col-start-auto">
+            {{ linha.correta }}
+            <label class="font-extrabold cursor-pointer" for="{{ linha.correta.id_for_label }}">Correta</label>
+          </div>
+        </div>
+        {% for hidden in linha.hidden_fields %}{{ hidden }}{% endfor %}
+        {% for erro in linha.texto.errors %}
+          <div class="erro-campo">
+            {% include "components/icone.html" with nome="alert-circle" classe="inline size-4 mr-1" %}{{ erro }}
+          </div>
+        {% endfor %}
+        {% for erro in linha.non_field_errors %}
+          <div class="erro-campo">
+            {% include "components/icone.html" with nome="alert-circle" classe="inline size-4 mr-1" %}{{ erro }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="mt-8 flex flex-col-reverse gap-4 sm:flex-row sm:justify-end">
+      <a class="btn btn-lg w-full sm:w-auto" href="{% url 'quiz:perguntas' %}">Cancelar</a>
+      <button type="submit" class="btn btn-primary btn-lg w-full sm:w-auto">Salvar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

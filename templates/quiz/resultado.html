@@ -1,0 +1,103 @@
+{% extends "layouts/base.html" %}
+{% load quiz_extras %}
+{% block titulo %}Resultado · Show do Tonhão{% endblock %}
+
+{% block conteudo %}
+<section class="card relative mx-auto my-8 max-w-2xl px-5 py-10 sm:px-8 text-center" role="status" aria-live="polite">
+  {% if partida.status == 'venceu' %}
+    <div class="confete pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-2xl" aria-hidden="true">
+      <i style="--x: 4%;  --y: 8%;  --r: 20deg"></i>
+      <i style="--x: 92%; --y: 6%;  --r: -15deg"></i>
+      <i style="--x: 12%; --y: 40%; --r: 45deg"></i>
+      <i style="--x: 88%; --y: 36%; --r: 10deg"></i>
+      <i style="--x: 6%;  --y: 78%; --r: -30deg"></i>
+      <i style="--x: 94%; --y: 74%; --r: 25deg"></i>
+      <i style="--x: 30%; --y: 4%;  --r: 60deg"></i>
+      <i style="--x: 70%; --y: 92%; --r: -50deg"></i>
+      <i style="--x: 22%; --y: 90%; --r: 15deg"></i>
+      <i style="--x: 78%; --y: 10%; --r: 35deg"></i>
+    </div>
+  {% endif %}
+
+  <div class="relative z-10 mx-auto mb-4 flex size-20 items-center justify-center rounded-full border-4 border-line shadow-hard
+    {% if partida.status == 'venceu' %}bg-ok text-white
+    {% elif partida.status == 'parou' %}bg-sun text-navy
+    {% else %}bg-err text-white{% endif %}">
+    {% if partida.status == 'venceu' %}
+      {% include "components/icone.html" with nome="trophy" classe="size-10" %}
+    {% elif partida.status == 'parou' %}
+      {% include "components/icone.html" with nome="hand" classe="size-10" %}
+    {% else %}
+      {% include "components/icone.html" with nome="cloud-rain" classe="size-10" %}
+    {% endif %}
+  </div>
+
+  <div class="relative z-10 mb-8">
+    {% if partida.status == 'venceu' %}
+      <h1 class="mb-2 text-[clamp(2rem,5vw,3rem)] leading-tight">Você é milionário!</h1>
+      <p class="text-xl font-bold">Uma conquista para a história.</p>
+    {% elif partida.status == 'parou' %}
+      <h1 class="mb-2 text-[clamp(2rem,5vw,3rem)] leading-tight">Boa decisão, você parou</h1>
+      <p class="text-xl font-bold">Garantir é melhor do que arriscar tudo.</p>
+    {% else %}
+      <h1 class="mb-2 text-[clamp(2rem,5vw,3rem)] leading-tight">Não foi dessa vez</h1>
+      <p class="text-xl font-bold">O último patamar garantido é seu.</p>
+    {% endif %}
+  </div>
+
+  <div class="relative z-10 mb-10 flex flex-col items-center">
+    <span class="etiqueta mb-2">Você leva</span>
+    <div class="-rotate-2 rounded-3xl border-4 border-navy bg-sun px-6 py-3 text-[clamp(2.5rem,6vw,4rem)] font-black leading-none text-navy shadow-hard tabular-nums">
+      {{ partida.premio_final|reais }}
+    </div>
+  </div>
+
+  <div class="relative z-10 mb-10 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border-4 border-line bg-paper p-4 shadow-hard-sm">
+      <span class="etiqueta block mb-1">Nível</span>
+      <span class="text-xl font-black">{{ partida.nivel_atual }} de 16</span>
+    </div>
+    <div class="rounded-2xl border-4 border-line bg-paper p-4 shadow-hard-sm">
+      <span class="etiqueta block mb-1">Tempo</span>
+      <span class="text-xl font-black tabular-nums">{{ partida.duracao|tempo }}</span>
+    </div>
+    <div class="rounded-2xl border-4 border-line bg-paper p-4 shadow-hard-sm">
+      <span class="etiqueta block mb-1">Ajudas</span>
+      <span class="text-xl font-black">{{ ajudas_usadas }} de 6</span>
+    </div>
+  </div>
+
+  {% if correta %}
+    <div class="relative z-10 mb-10 text-left">
+      {% if escolhida %}
+        <p class="mb-2 font-bold">Você marcou:</p>
+        <div class="mb-4 flex items-center gap-3 rounded-2xl border-4 border-err bg-paper px-5 py-3.5 font-black text-error-text shadow-hard-sm">
+          {% include "components/icone.html" with nome="check-circle" classe="size-6 shrink-0" %}
+          <span>{{ escolhida.texto }}</span>
+        </div>
+      {% endif %}
+      <p class="mb-2 font-bold">A resposta certa era:</p>
+      <div class="flex items-center gap-3 rounded-2xl border-4 border-line bg-ok px-5 py-3.5 font-black text-white shadow-hard-sm">
+        {% include "components/icone.html" with nome="check-circle" classe="size-6 shrink-0" %}
+        <span>{{ correta.texto }}</span>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if posicao_ranking %}
+    <div class="relative z-10 mb-8 rounded-2xl bg-soft p-4 font-bold text-ink">
+      Você ficou em {{ posicao_ranking }}º no ranking! 
+      <a class="underline decoration-orange decoration-4 underline-offset-4" href="{% url 'quiz:ranking' %}">Ver ranking</a>
+    </div>
+  {% endif %}
+
+  <div class="relative z-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
+    <form method="post" action="{% url 'quiz:iniciar' %}" class="w-full sm:w-auto">
+      {% csrf_token %}
+      <input type="hidden" name="tema" value="{{ partida.tema_slug }}">
+      <button type="submit" class="btn btn-primary btn-lg w-full sm:w-auto">Jogar de novo</button>
+    </form>
+    <a class="btn btn-lg w-full sm:w-auto" href="{% url 'quiz:inicio' %}">Voltar ao início</a>
+  </div>
+</section>
+{% endblock %}

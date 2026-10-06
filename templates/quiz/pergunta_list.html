@@ -1,0 +1,61 @@
+{% extends "layouts/base.html" %}
+{% block titulo %}Perguntas · Show do Tonhão{% endblock %}
+
+{% block conteudo %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+  <h1 class="text-5xl">Perguntas</h1>
+  {% if perms.quiz.add_pergunta %}
+    <a class="btn btn-primary" href="{% url 'quiz:pergunta_nova' %}">{% include "components/icone.html" with nome="plus" classe="size-4" %} Nova pergunta</a>
+  {% endif %}
+</div>
+
+<form method="get" class="card mb-6">
+  <div class="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto]">
+    {% for campo in filtro %}
+      <div>
+        <label class="rotulo" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+        {{ campo }}
+      </div>
+    {% endfor %}
+    <div class="flex gap-2">
+      <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>
+      <a class="btn btn-sm" href="{% url 'quiz:perguntas' %}">Limpar</a>
+    </div>
+  </div>
+</form>
+
+{% if perguntas %}
+<section class="card p-2 md:p-4">
+  <div class="overflow-x-auto">
+    <div class="tabela-wrapper"><table class="tabela">
+      <thead>
+        <tr><th>Enunciado</th><th>Categoria</th><th>Dificuldade</th><th>Situação</th><th class="text-right">Ações</th></tr>
+      </thead>
+      <tbody>
+        {% for pergunta in perguntas %}
+          <tr>
+            <td class="min-w-72 max-w-md"><div class="line-clamp-2">{{ pergunta.enunciado_curto }}</div></td>
+            <td class="whitespace-nowrap">{{ pergunta.categoria.nome }}</td>
+            <td class="whitespace-nowrap">{{ pergunta.get_dificuldade_display }}</td>
+            <td class="whitespace-nowrap">{% if pergunta.ativa %}<span class="badge badge-ativa">Ativa</span>{% else %}<span class="badge">Inativa</span>{% endif %}</td>
+            <td class="text-right whitespace-nowrap">
+              <div class="flex items-center justify-end gap-2">
+                {% if perms.quiz.change_pergunta %}<a class="btn btn-sm" href="{% url 'quiz:pergunta_editar' pergunta.pk %}">Editar</a>{% endif %}
+                {% if perms.quiz.delete_pergunta %}<a class="btn btn-sm btn-danger" href="{% url 'quiz:pergunta_excluir' pergunta.pk %}">Excluir</a>{% endif %}
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+</section>
+{% else %}
+<section class="card p-6 text-center">
+  <p class="mb-4 text-lg">Nenhuma pergunta encontrada com esses filtros.</p>
+  <a class="btn btn-primary" href="{% url 'quiz:perguntas' %}">Limpar filtros</a>
+</section>
+{% endif %}
+
+{% include "components/paginacao.html" with pagina=page_obj qs=qs %}
+{% endblock %}

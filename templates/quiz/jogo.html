@@ -1,0 +1,120 @@
+{% extends "layouts/base.html" %}
+{% load static quiz_extras %}
+{% block titulo %}Pergunta {{ partida.nivel_atual }} · Show do Tonhão{% endblock %}
+{# Tela de pergunta tem barra própria e ocupa a altura toda: sem navegação nem rodapé globais. #}
+{% block navegacao %}{% endblock %}
+{% block rodape %}{% endblock %}
+
+{% block conteudo %}
+<form method="post" action="{% url 'quiz:responder' %}" id="form-resposta" class="cz-tela">
+  {% csrf_token %}
+  {# Botão padrão (Enter): garante que Enter confirme a resposta e não outra ação. #}
+  <button type="submit" class="sr-only" tabindex="-1" aria-hidden="true">Confirmar</button>
+
+  <header class="flex flex-col gap-5 md:flex-row md:flex-wrap md:items-center md:justify-between mb-2">
+    <div class="flex items-center justify-between w-full md:w-auto">
+      <a class="cz-logo" href="{% url 'quiz:inicio' %}">
+        <span class="cz-logo-icone" aria-hidden="true">{% include "components/icone.html" with nome="trophy" classe="size-5" %}</span>Show do Tonhão
+      </a>
+      <div class="md:hidden">
+        {% include "components/aparencia.html" %}
+      </div>
+    </div>
+
+    <ol class="cz-progresso w-full md:w-auto md:flex-1 order-last md:order-none" aria-label="Progresso: pergunta {{ partida.nivel_atual }} de {{ total_niveis }}">
+      {% for degrau in escada reversed %}
+        <li class="cz-ponto cz-ponto-{{ degrau.estado }}"{% if degrau.estado == 'atual' %} aria-current="step"{% endif %}><span class="sr-only">{{ degrau.nivel }}</span></li>
+      {% endfor %}
+    </ol>
+
+    <div class="cz-topo-acoes w-full md:w-auto flex flex-wrap justify-center md:justify-end items-center gap-2">
+      <div class="flex items-center justify-center gap-2 w-full sm:w-auto">
+        <span class="cz-pilula cz-pilula-dinheiro"><small>Parar</small> {{ parar|reais }}</span>
+        <span class="cz-pilula"><small>Errar</small> {{ errar|reais }}</span>
+      </div>
+      <button type="submit" class="cz-pilula cz-pilula-botao w-full sm:w-auto justify-center" formaction="{% url 'quiz:abandonar' %}" formnovalidate
+              data-confirmar="Abandonar a partida? Você não leva nenhum prêmio.">Abandonar</button>
+      <div class="hidden md:block">
+        {% include "components/aparencia.html" %}
+      </div>
+    </div>
+  </header>
+
+  <div class="cz-corpo">
+    <div class="cz-coluna">
+      <section class="cz-pergunta" aria-labelledby="enunciado">
+        <p class="cz-etiqueta">{{ pergunta.categoria.nome }} <span class="cz-selo">pergunta {{ partida.nivel_atual }} de {{ total_niveis }} · vale {{ acertar|reais }}</span></p>
+        <h1 id="enunciado">{{ pergunta.enunciado }}</h1>
+      </section>
+
+      {% if dica %}
+        <div class="cz-dica" role="note">
+          <span class="cz-dica-icone" aria-hidden="true">T</span>
+          <p><span class="sr-only">Dica do Tonhão: </span>{{ dica }}</p>
+        </div>
+      {% endif %}
+
+      <div class="cz-alternativas" role="radiogroup" aria-labelledby="enunciado">
+        {% for alt in alternativas %}
+          <div class="contents">
+            <input class="alt-input peer sr-only" type="radio" name="alternativa" id="alt-{{ alt.obj.pk }}"
+                   value="{{ alt.obj.pk }}" required{% if alt.eliminada %} disabled{% endif %}>
+            <label class="cz-alt" for="alt-{{ alt.obj.pk }}">
+              <span class="cz-letra">{{ alt.letra }}</span>
+              <span class="cz-texto">{{ alt.obj.texto }}</span>
+              {% if alt.percentual is not None %}<span class="cz-pct">{{ alt.percentual }}%</span>{% endif %}
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="cz-rodape">
+        <div class="cz-ajudas" aria-label="Ajudas">
+          {% for ajuda in ajudas %}
+            <button type="submit" class="cz-ajuda" formaction="{% url 'quiz:ajuda' ajuda.slug %}" formnovalidate
+                    {% if not ajuda.disponivel %}disabled{% endif %}>
+              <span>{{ ajuda.nome }}</span><span class="cz-ajuda-qtd">{{ ajuda.qtd }}</span>
+            </button>
+          {% endfor %}
+        </div>
+        <div class="cz-botoes">
+          <button type="submit" class="cz-botao cz-botao-confirmar">Confirmar</button>
+          <button type="submit" class="cz-botao" formaction="{% url 'quiz:parar' %}" formnovalidate
+                  data-confirmar="Parar agora e levar {{ parar|reais }}?">Parar</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="cz-premios hidden lg:flex" aria-labelledby="titulo-premios">
+      <h2 id="titulo-premios" class="cz-etiqueta cz-centro">Prêmios</h2>
+      <ol>
+        {% for degrau in escada %}
+          <li class="cz-degrau cz-degrau-{{ degrau.estado }}{% if degrau.parada or degrau.topo %} cz-degrau-parada{% endif %}"{% if degrau.estado == 'atual' %} aria-current="step"{% endif %}>
+            <span class="cz-degrau-n">{{ degrau.nivel }}</span>
+            <span class="cz-degrau-marca" aria-hidden="true">{% if degrau.parada or degrau.topo %}★{% elif degrau.estado == 'passado' %}✓{% endif %}</span>
+            <span class="cz-degrau-valor">{{ degrau.valor|reais }}</span>
+          </li>
+        {% endfor %}
+      </ol>
+    </aside>
+
+    <details class="lg:hidden rounded-3xl border-4 border-line bg-paper p-4 shadow-hard-sm">
+      <summary class="font-extrabold flex justify-between items-center cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+        <span class="text-lg">Ver prêmios</span>
+        <span class="cz-etiqueta m-0">Nível {{ partida.nivel_atual }}</span>
+      </summary>
+      <ol class="mt-4 border-t-4 border-line pt-4 flex flex-col gap-1">
+        {% for degrau in escada reversed %}
+          <li class="cz-degrau cz-degrau-{{ degrau.estado }}{% if degrau.parada or degrau.topo %} cz-degrau-parada{% endif %}"{% if degrau.estado == 'atual' %} aria-current="step"{% endif %}>
+            <span class="cz-degrau-n">{{ degrau.nivel }}</span>
+            <span class="cz-degrau-marca" aria-hidden="true">{% if degrau.parada or degrau.topo %}★{% elif degrau.estado == 'passado' %}✓{% endif %}</span>
+            <span class="cz-degrau-valor">{{ degrau.valor|reais }}</span>
+          </li>
+        {% endfor %}
+      </ol>
+    </details>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}<script src="{% static 'js/jogo.js' %}"></script>{% endblock %}
