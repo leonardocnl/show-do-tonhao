@@ -13,3 +13,5 @@ staticfiles/
 .idea/
 .vscode/
 .DS_Store
+
+/tailwindcss
